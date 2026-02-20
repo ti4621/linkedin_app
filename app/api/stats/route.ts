@@ -9,15 +9,17 @@ export async function GET() {
     orderBy: [{ date: "asc" }, { game: "asc" }]
   });
 
-  const rows: ScoreRow[] = scores
-    .filter((s) => isGameKey(s.game))
-    .map((s) => ({
+  const rows: ScoreRow[] = [];
+  for (const s of scores) {
+    if (!isGameKey(s.game)) continue;
+    rows.push({
       playerId: s.playerId,
       playerName: s.player.name,
       date: s.date,
       game: s.game,
       timeSecs: s.timeSecs
-    }));
+    });
+  }
 
   return NextResponse.json(computeStats(rows));
 }
